@@ -1,23 +1,13 @@
 <?php
 header("Content-type: text/plain");
+require_once("../inc/common.inc.php");
 
-if (--$argc == 1) {
+$checkingFileStatus = checkFilePath($argc, $argv);
+if ($checkingFileStatus == FILE_NO_ERROR) {
     $path = $argv[1];
-    echo "Path: ", $path, "\n";
-    if (is_dir($path)) {
-        //print_r(scandir($path));
-        if ($dir = opendir($path)) {
-            while (($file = readdir($dir)) !== false) {
-                $filePath = $path . "\\" .  $file;
-                if (filetype($filePath) == "file") {
-                    print "File: $file : type: " . pathinfo($filePath)["extension"] . " : " . stat($filePath)["size"] . "\n";
-                }
-            }
-            closedir($dir);
-        }
-    } else {
-        echo "Undefined dir!";
-    }
+    $fileExtensionsArray = getFilesFromFolder($path);
+    printFileExtensionSize($fileExtensionsArray);
 } else {
-    echo "Incorrect parameters!";
+    $errorText = getFileErrorText($checkingFileStatus);
+    echo $errorText;
 }
